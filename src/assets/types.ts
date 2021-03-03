@@ -1,0 +1,1 @@
+export type Color = "red" | "orange" | "yellow" | "olive" | "green" | "teal" | "blue" | "voilet" | "purple" | "pink" | "brown" | "grey" | "black"
