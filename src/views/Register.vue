@@ -4,95 +4,72 @@
 			<div class="column">
 				<h2 class="ui teal image header">
 					<img src="../assets/logo.png" class="image" />
-					<div class="content">
-						欢迎来到闻所未闻
-					</div>
+					<div class="content">欢迎来到闻所未闻</div>
 				</h2>
 				<div class="ui form">
 					<div class="ui stacked segment">
-						<div class="field" :class="[inputStatus(usernameValid, isEmpty(username))]">
+						<div class="field" :class="[
+							inputStatus(usernameValid, isEmpty(username)),
+						]">
 							<div class="ui left icon input">
 								<i class="user icon"></i>
-								<input
-									type="text"
-									name="username"
-									placeholder="用户名"
-									v-model="username"
-								/>
+								<input type="text" name="username" placeholder="用户名" v-model="username" />
 							</div>
 						</div>
-						<div class="field" :class="[inputStatus(passwordValid, isEmpty(password))]">
+						<div class="field" :class="[
+							inputStatus(passwordValid, isEmpty(password)),
+						]">
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input
-									type="password"
-									name="password"
-									placeholder="密码"
-									v-model="password"
-								/>
+								<input type="password" name="password" placeholder="密码" v-model="password" />
 							</div>
 						</div>
 						<div
 							class="field"
 							:class="[
-								inputStatus(passwordValid && repeatedValid, isEmpty(repeated)),
+								inputStatus(
+									passwordValid && repeatedValid,
+									isEmpty(repeated)
+								),
 							]"
 						>
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input
-									type="password"
-									name="repeatPassword"
-									placeholder="重复密码"
-									v-model="repeated"
-								/>
+								<input type="password" name="repeatPassword" placeholder="重复密码" v-model="repeated" />
 							</div>
 						</div>
 						<div class="field" :class="[inputStatus(emailValid, isEmpty(email))]">
 							<div class="ui left icon input">
 								<i class="envelope icon"></i>
-								<input
-									type="text"
-									name="email"
-									placeholder="邮箱地址"
-									v-model="email"
-								/>
+								<input type="text" name="email" placeholder="邮箱地址" v-model="email" />
 							</div>
 						</div>
 						<div class="field" :class="[inputStatus(codeValid, isEmpty(code))]">
 							<div class="ui left icon input">
 								<i class="envelope open outline icon"></i>
-								<input
-									type="text"
-									name="code"
-									placeholder="验证码"
-									v-model="code"
-								/>
+								<input type="text" name="code" placeholder="验证码" v-model="code" />
 								<button
 									v-if="timeLeft == 0"
 									class="ui green button"
 									:disabled="!/^\w+@\w+\.+\w+$/.test(email)"
-									@click="onSendEmail()"
-								>
-									发送验证邮件
-								</button>
-								<button v-else class="ui teal button" disabled>
-									{{ timeLeft }}s
-								</button>
+									@click="onSendEmail"
+								>发送验证邮件</button>
+								<button v-else class="ui teal button" disabled>{{ timeLeft }}s</button>
 							</div>
 						</div>
 						<button
 							class="ui fluid large button"
 							:class="[registerButtonColor]"
 							:disabled="status != 'Valid'"
-							@click="onSubmit()"
-						>
-							注册
-						</button>
+							@click="onSubmit"
+						>注册</button>
 					</div>
 					<div class="ui error message"></div>
 				</div>
-				<div class="ui message">已有账户？ <router-link to="/login">登录</router-link></div>
+				<div class="ui message">
+					已有账户？
+					<router-link to="/login">登录</router-link>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -102,18 +79,23 @@
 import { Vue, Options } from "vue-class-component";
 import { Color } from "../assets/types";
 import Axios from "axios";
-import $ from "jquery";
+import { Router } from "vue-router";
 
 type RegisterStatus = "Incomplete" | "Invalid" | "Valid";
 
-Vue.registerHooks(["beforeRouteEnter", "beforeRouteLeave", "beforeRouteUpdate"]);
+Vue.registerHooks([
+	"beforeRouteEnter",
+	"beforeRouteLeave",
+	"beforeRouteUpdate",
+]);
 @Options({
 	emits: {
 		toggleHeader: (visible: boolean) => typeof visible == "boolean",
 		toggleFooter: (visible: boolean) => typeof visible == "boolean",
 	},
 })
-export default class Register extends Vue {
+export default class RegisterView extends Vue {
+	$router!: Router;
 	timeLeft: number = 0;
 	username: string = "";
 	password: string = "";
@@ -144,7 +126,12 @@ export default class Register extends Vue {
 			this.isEmpty(this.code)
 		)
 			return "Incomplete";
-		else if (!this.usernameValid || !this.passwordValid || !this.emailValid || !this.codeValid)
+		else if (
+			!this.usernameValid ||
+			!this.passwordValid ||
+			!this.emailValid ||
+			!this.codeValid
+		)
 			return "Invalid";
 		else return "Valid";
 	}
@@ -176,8 +163,9 @@ export default class Register extends Vue {
 			username: this.username,
 			password: this.password,
 			email: this.email,
-			verificationCode: this.code,
+			code: this.code,
 		}).then(response => {
+			console.log(response.status);
 			if (response.status % 100 == 2) this.$router.push("/");
 		});
 	}

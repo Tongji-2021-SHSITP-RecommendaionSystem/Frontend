@@ -4,30 +4,36 @@
 			<div class="column">
 				<h2 class="ui teal image header">
 					<img src="../assets/logo.png" class="image" />
-					<div class="content">
-						账号登录
-					</div>
+					<div class="content">账号登录</div>
 				</h2>
-				<form class="ui large form">
+				<div class="ui large form">
 					<div class="ui stacked segment">
-						<div class="field">
+						<div class="field" :class="[emailInputStatus]">
 							<div class="ui left icon input">
 								<i class="user icon"></i>
-								<input type="text" name="email" placeholder="E-mail address" />
+								<input type="text" name="email" placeholder="邮箱" v-model="email" @focusout="onFocusOut" />
 							</div>
 						</div>
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="password" placeholder="Password" />
+								<input type="password" name="password" placeholder="密码" v-model="password" />
 							</div>
 						</div>
-						<div class="ui fluid large teal submit button">Login</div>
+						<button
+							class="ui fluid large teal submit button"
+							:disabled="!emailExist || isEmpty(password)"
+							@click="onLogin"
+						>登录</button>
 					</div>
-					<div class="ui error message"></div>
-				</form>
+				</div>
+				<div class="ui error message" v-show="errorMessage != ''">
+					<i class="close icon"></i>
+					<div class="header">{{ errorMessage }}</div>
+				</div>
 				<div class="ui message">
-					新用户？ <router-link to="/register">加入我们</router-link>
+					新用户？
+					<router-link to="/register">加入我们</router-link>
 				</div>
 			</div>
 		</div>
@@ -35,26 +41,87 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-export default defineComponent({
-	name: "Login",
+import { Vue, Options } from "vue-class-component";
+import Axios, { AxiosError } from "axios";
+import $ from "jquery";
+
+@Options({
 	emits: {
 		toggleHeader: (_visible: boolean) => true,
 		toggleFooter: (_visible: boolean) => true,
 	},
-	methods: {},
-	beforeRouteEnter(to, from, next) {
-		next(component => {
-			(component as any).$emit("toggleHeader", false);
-			(component as any).$emit("toggleFooter", false);
-		});
+	watch: {
+		emailExist(this: LoginView, value) {
+			if (value == false)
+				this.errorMessage = "邮箱未注册";
+			else
+				this.errorMessage = "";
+		},
 	},
-	beforeRouteLeave(to, from, next) {
-		if (to.name != "register") {
-			this.$emit("toggleHeader", true);
-			this.$emit("toggleFooter", true);
+})
+export default class LoginView extends Vue {
+	email: string = "";
+	password: string = "";
+	emailExist: boolean | null = null;
+	errorMessage: string = "";
+
+	get emailInputStatus() {
+		switch (this.emailExist) {
+			case true:
+				return "success";
+			case false:
+				return "error";
+			default:
+				return "";
 		}
-		next();
-	},
-});
+	}
+	get loginError() {
+		return this.errorMessage != "";
+	}
+
+	isEmpty(str: string): boolean {
+		return str == "";
+	}
+	onFocusOut() {
+		if (this.isEmpty(this.email)) this.emailExist = null;
+		else if (!/^\w+@\w+\.+\w+$/.test(this.email)) this.emailExist = false;
+		else {
+			Axios.get("/api/user/hasUser", {
+				params: {
+					email: this.email,
+				},
+			}).then(response => {
+				this.emailExist = response.data.exist;
+			});
+		}
+	}
+	onLogin() {
+		Axios.get("/api/user/login", {
+			params: {
+				email: this.email,
+				password: this.password,
+			},
+		}).then(
+			_ => this.$router.push("/"),
+			(error: AxiosError) => {
+				if (error.response!.status == 400)
+					this.$router.push("/");
+				else
+					this.errorMessage = error.response?.data;
+			}
+		);
+	}
+
+	mounted() {
+		this.$emit("toggleHeader", false);
+		this.$emit("toggleFooter", false);
+		$(".icon.close", this.$el).on("click", function() {
+			$(this).parent().hide();
+		});
+	}
+	unmounted() {
+		this.$emit("toggleHeader", true);
+		this.$emit("toggleFooter", true);
+	}
+}
 </script>
