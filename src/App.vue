@@ -1,87 +1,33 @@
 <template>
-	<div>
-		<div id="nav" v-if="headerVisible" class="ui fixed inverted menu">
-			<img src="./assets/logo.png" width="40" height="40" />
-			<router-link class="item" to="/">Home</router-link>
-			<router-link class="item" to="/about">About</router-link>
-			<router-link class="item" to="/login">Login</router-link>
+	<div id="navigator" class="ui inverted segment" v-if="headerVisible">
+		<div class="ui inverted secondary menu">
+			<router-link class="item" to="/">主页</router-link>
+			<router-link class="item" to="/about">关于</router-link>
+			<router-link class="item" to="/login">登录</router-link>
 		</div>
-		<div class="ui main text container">
-			<router-view @toggle-header="toggleHeader" @toggle-footer="toggleFooter" />
-		</div>
-		<div v-if="footerVisible" class="ui inverted vertical footer segment">
-			<div class="ui center aligned container">
-				<div class="ui stackable inverted divided grid">
-					<div class="three wide column">
-						<h4 class="ui inverted header">Group 1</h4>
-						<div class="ui inverted link list">
-							<a href="#" class="item">Link One</a>
-							<a href="#" class="item">Link Two</a>
-							<a href="#" class="item">Link Three</a>
-							<a href="#" class="item">Link Four</a>
-						</div>
-					</div>
-					<div class="three wide column">
-						<h4 class="ui inverted header">Group 2</h4>
-						<div class="ui inverted link list">
-							<a href="#" class="item">Link One</a>
-							<a href="#" class="item">Link Two</a>
-							<a href="#" class="item">Link Three</a>
-							<a href="#" class="item">Link Four</a>
-						</div>
-					</div>
-					<div class="three wide column">
-						<h4 class="ui inverted header">Group 3</h4>
-						<div class="ui inverted link list">
-							<a href="#" class="item">Link One</a>
-							<a href="#" class="item">Link Two</a>
-							<a href="#" class="item">Link Three</a>
-							<a href="#" class="item">Link Four</a>
-						</div>
-					</div>
-					<div class="seven wide column">
-						<h4 class="ui inverted header">Footer Header</h4>
-						<p>
-							Extra space for a call to action inside the footer
-							that could help re-engage users.
-						</p>
-					</div>
-				</div>
-				<div class="ui inverted section divider"></div>
-				<div class="ui horizontal inverted small divided link list">
-					<a class="item" href="#">Site Map</a>
-					<a class="item" href="#">Contact Us</a>
-					<a class="item" href="#">Terms and Conditions</a>
-					<a class="item" href="#">Privacy Policy</a>
-				</div>
-			</div>
-		</div>
+	</div>
+	<div id="main" :style="{ backgroundImage: backgoundImagePath }">
+		<router-view @toggle-header="toggleHeader" @set-background-image="setBackgroundImage" />
 	</div>
 </template>
 
 <style lang="scss">
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
-	color: #2c3e50;
+	color: #21413e;
 }
-
-.main.container {
-	margin-top: 10em;
+#main {
+	padding: 2em;
+	margin: 0 auto;
+	background-size: 100% 100%;
 }
-
-.ui.footer.segment {
-	margin: 5em 0em 0em;
-	padding: 5em 0em;
-}
-
-#nav {
-	padding: 30px;
+#navigator {
+	margin: 0 auto;
 	a {
 		font-weight: bold;
-		color: #45698d;
+		font-size: medium;
+		color: #1b2c3d;
 		&.router-link-exact-active {
 			color: #42b983;
 		}
@@ -103,12 +49,15 @@ import { Vue, Options } from "vue-class-component";
 })
 export default class App extends Vue {
 	headerVisible: boolean = true;
-	footerVisible: boolean = true;
+	backgroundImage: string = "default.jpg";
+	get backgoundImagePath(): string {
+		return `url("./assets/image/background/${this.backgroundImage}")`
+	}
 	toggleHeader(visible: boolean) {
 		this.headerVisible = visible;
 	}
-	toggleFooter(visible: boolean) {
-		this.footerVisible = visible;
+	setBackgroundImage(filename: string) {
+		this.backgroundImage = filename;
 	}
 }
 </script>

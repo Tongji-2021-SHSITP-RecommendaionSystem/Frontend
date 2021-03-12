@@ -28,13 +28,13 @@ const routes: Array<RouteRecordRaw> = [
 		component: RegisterView
 	},
 	{
-		path: "/news/?id=:id",
+		path: "/news?id=:id",
 		name: "News",
 		props: true,
 		component: NewsView
 	},
 	{
-		path: "/exception",
+		path: "/exception?status=:status",
 		name: "Exception",
 		component: ExceptionView,
 		props: true

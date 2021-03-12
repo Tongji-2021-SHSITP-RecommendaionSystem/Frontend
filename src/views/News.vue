@@ -1,5 +1,5 @@
 <template>
-	<div class="ui main text container">
+	<div v-if="ready" class="ui main text container">
 		<a :href="url">
 			<h1 class="ui header">{{ title }}</h1>
 		</a>
@@ -9,15 +9,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from "vue-class-component";
+import { Vue } from "vue-class-component";
 import Axios, { AxiosResponse, AxiosError } from "axios";
-import Config from "../config";
 import News from "../../../Backend/src/entity/News";
+import ErrorHandler from '../error-handler';
 
+type Stringfy<T> = { [K in keyof T]: Function extends T[K] ? T[K] : string };
 class Props {
 	id!: number;
 }
 export default class NewsView extends Vue.with(Props) {
+	ready: boolean = false;
 	title!: string;
 	url!: string;
 	source!: string;
@@ -29,28 +31,20 @@ export default class NewsView extends Vue.with(Props) {
 		return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
 	async created() {
-		let retries = Config.retries;
-		do {
-			await Axios.get("/api/news/getNews", {
-				params: { id: this.id }
-			}).then(
-				(response: AxiosResponse<News>) => {
-					retries = 0;
-					const news = response.data;
-					this.title = news.title;
-					this.url = news.url;
-					this.source = news.source;
-					this.date = news.date;
-					this.article = news.article;
-				},
-				(error: AxiosError) => {
-					if ((error.response!.status / 100) >> 0 == 5)
-						retries -= 1;
-					else
-						retries = 0;
-				}
-			);
-		} while (retries > 0);
+		Axios.get("/api/news/getNews", {
+			params: { id: this.id }
+		}).then(
+			(response: AxiosResponse<Stringfy<News>>) => {
+				const news = response.data;
+				this.title = news.title;
+				this.url = news.url;
+				this.source = news.source;
+				this.date = new Date(news.date);
+				this.article = news.article;
+				this.ready = true;
+			},
+			(error: AxiosError) => ErrorHandler.axios(error, this.$router)
+		);
 	}
 	mounted() {
 		this.startTime = Date.now();

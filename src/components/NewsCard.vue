@@ -1,28 +1,30 @@
 <template>
 	<div class="ui card">
 		<div class="content">
-			<div class="right floated meta">{{ interval(date) }}</div>
-			{{ source }}
+			<div class="right floated meta">{{ interval(new Date(date)) }}</div>
+			<div class="left floated">{{ source }}</div>
 		</div>
 		<div class="image">
 			<router-link :to="target">
-				<img :src="image" />
+				<img style="height:100%;width:100%" :src="image" />
 			</router-link>
 		</div>
 		<div class="content">
-			<span class="header">{{ title }}</span>
+			<router-link :to="target">
+				<span class="header">{{ title }}</span>
+			</router-link>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import { Vue, Options } from "vue-class-component";
+import { Vue } from "vue-class-component";
 class Props {
-	id!: number;
+	id!: string;
 	title!: string;
 	url!: string;
 	image!: string;
-	date!: Date;
+	date!: string;
 	source!: string;
 }
 export default class NewsCard extends Vue.with(Props) {

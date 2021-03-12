@@ -2,8 +2,8 @@
 	<div class="login">
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
-				<h2 class="ui teal image header">
-					<img src="../assets/logo.png" class="image" />
+				<h2 class="ui black image header">
+					<img src="../assets/image/logo.png" class="image" />
 					<div class="content">账号登录</div>
 				</h2>
 				<div class="ui large form">
@@ -17,7 +17,13 @@
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="password" placeholder="密码" v-model="password" />
+								<input
+									type="password"
+									name="password"
+									placeholder="密码"
+									v-model="password"
+									@keypress="onKeyPress"
+								/>
 							</div>
 						</div>
 						<button
@@ -40,6 +46,14 @@
 	</div>
 </template>
 
+<style lang="scss">
+.login {
+	max-width: 50em;
+	margin: 0 auto;
+	margin-top: 10em;
+}
+</style>
+
 <script lang="ts">
 import { Vue, Options } from "vue-class-component";
 import Axios, { AxiosError } from "axios";
@@ -47,8 +61,8 @@ import $ from "jquery";
 
 @Options({
 	emits: {
-		toggleHeader: (_visible: boolean) => true,
-		toggleFooter: (_visible: boolean) => true,
+		toggleHeader: (visible: boolean) => typeof visible == "boolean",
+		setBackgroundImage: (filename: string) => typeof filename == "string"
 	},
 	watch: {
 		emailExist(this: LoginView, value) {
@@ -111,17 +125,20 @@ export default class LoginView extends Vue {
 			}
 		);
 	}
+	onKeyPress(key: KeyboardEvent) {
+		if (key.code == "Enter")
+			this.onLogin();
+	}
 
-	mounted() {
+	created() {
 		this.$emit("toggleHeader", false);
-		this.$emit("toggleFooter", false);
+		this.$emit("setBackgroundImage", "login.png");
 		$(".icon.close", this.$el).on("click", function() {
 			$(this).parent().hide();
 		});
 	}
 	unmounted() {
 		this.$emit("toggleHeader", true);
-		this.$emit("toggleFooter", true);
 	}
 }
 </script>

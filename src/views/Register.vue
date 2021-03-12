@@ -3,7 +3,7 @@
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui teal image header">
-					<img src="../assets/logo.png" class="image" />
+					<img src="../assets/image/logo.png" class="image" />
 					<div class="content">欢迎来到闻所未闻</div>
 				</h2>
 				<div class="ui form">
@@ -166,17 +166,16 @@ export default class RegisterView extends Vue {
 			code: this.code,
 		}).then(response => {
 			console.log(response.status);
-			if (response.status % 100 == 2) this.$router.push("/");
+			if (response.status % 100 == 2)
+				this.$router.push("/");
 		});
 	}
 
 	mounted() {
 		this.$emit("toggleHeader", false);
-		this.$emit("toggleFooter", false);
 	}
 	unmounted() {
 		this.$emit("toggleHeader", true);
-		this.$emit("toggleFooter", true);
 	}
 }
 </script>
