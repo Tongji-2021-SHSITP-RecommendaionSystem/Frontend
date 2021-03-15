@@ -1,5 +1,5 @@
 {
-	"name": "news-recommendation",
+	"name": "news-recommendation-frontend",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
