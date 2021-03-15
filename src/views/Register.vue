@@ -2,7 +2,7 @@
 	<div class="register">
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
-				<h2 class="ui teal image header">
+				<h2 class="ui black image header">
 					<img src="../assets/image/logo.png" class="image" />
 					<div class="content">欢迎来到闻所未闻</div>
 				</h2>
@@ -74,6 +74,18 @@
 		</div>
 	</div>
 </template>
+
+<style lang="scss">
+.register {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-image: url("../assets/image/background/login.png");
+	background-size: 100% 100%;
+}
+</style>
 
 <script lang="ts">
 import { Vue, Options } from "vue-class-component";

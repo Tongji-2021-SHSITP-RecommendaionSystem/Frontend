@@ -20,7 +20,8 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/login",
 		name: "Login",
-		component: LoginView
+		component: LoginView,
+		props: true
 	},
 	{
 		path: "/register",
@@ -30,8 +31,8 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/news?id=:id",
 		name: "News",
+		component: NewsView,
 		props: true,
-		component: NewsView
 	},
 	{
 		path: "/exception?status=:status",
@@ -43,7 +44,16 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
 	history: createWebHashHistory(),
-	routes
+	routes,
 });
-router.replace("/login");
+router.beforeEach((to, from, next) => {
+	if (to.name == "Exception") {
+		if (to.params.status == "401")
+			next({ name: "Login" });
+		else
+			next();
+	}
+	else
+		next();
+})
 export default router

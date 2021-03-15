@@ -48,17 +48,29 @@
 
 <style lang="scss">
 .login {
-	max-width: 50em;
-	margin: 0 auto;
-	margin-top: 10em;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-image: url("../assets/image/background/login.png");
+	background-size: 100% 100%;
+	.grid {
+		min-width: 25em;
+	}
 }
 </style>
 
 <script lang="ts">
 import { Vue, Options } from "vue-class-component";
+import { RouteLocationRaw } from "vue-router";
 import Axios, { AxiosError } from "axios";
 import $ from "jquery";
 
+class Props {
+	from?: RouteLocationRaw;
+	logout?: boolean;
+}
 @Options({
 	emits: {
 		toggleHeader: (visible: boolean) => typeof visible == "boolean",
@@ -73,7 +85,7 @@ import $ from "jquery";
 		},
 	},
 })
-export default class LoginView extends Vue {
+export default class LoginView extends Vue.with(Props) {
 	email: string = "";
 	password: string = "";
 	emailExist: boolean | null = null;
@@ -116,10 +128,10 @@ export default class LoginView extends Vue {
 				password: this.password,
 			},
 		}).then(
-			_ => this.$router.push("/"),
+			_ => this.$router.push(this.from ?? "/"),
 			(error: AxiosError) => {
 				if (error.response!.status == 400)
-					this.$router.push("/");
+					this.$router.push(this.from ?? "/");
 				else
 					this.errorMessage = error.response?.data;
 			}
@@ -131,11 +143,13 @@ export default class LoginView extends Vue {
 	}
 
 	created() {
-		this.$emit("toggleHeader", false);
 		this.$emit("setBackgroundImage", "login.png");
 		$(".icon.close", this.$el).on("click", function() {
 			$(this).parent().hide();
 		});
+	}
+	mounted() {
+		this.$emit("toggleHeader", false);
 	}
 	unmounted() {
 		this.$emit("toggleHeader", true);

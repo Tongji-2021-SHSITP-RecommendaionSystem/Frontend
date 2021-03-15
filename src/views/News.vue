@@ -4,9 +4,19 @@
 			<h1 class="ui header">{{ title }}</h1>
 		</a>
 		<p class="meta">{{ `${formatDate(date)} ${source}` }}</p>
-		<div v-html="article" />
+		<div id="article" class="ui segment" v-html="article" />
 	</div>
 </template>
+
+<style lang="scss">
+#article {
+	text-align: left;
+	text-indent: 1em;
+}
+.ui.main.text.container {
+	margin-top: 2em;
+}
+</style>
 
 <script lang="ts">
 import { Vue } from "vue-class-component";

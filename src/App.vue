@@ -1,13 +1,23 @@
 <template>
-	<div id="navigator" class="ui inverted segment" v-if="headerVisible">
+	<header id="navigator" class="ui inverted segment" v-if="headerVisible">
 		<div class="ui inverted secondary menu">
 			<router-link class="item" to="/">主页</router-link>
 			<router-link class="item" to="/about">关于</router-link>
-			<router-link class="item" to="/login">登录</router-link>
+			<router-link class="item right" to="/login">登出</router-link>
 		</div>
-	</div>
-	<div id="main" :style="{ backgroundImage: backgoundImagePath }">
-		<router-view @toggle-header="toggleHeader" @set-background-image="setBackgroundImage" />
+	</header>
+	<div id="main">
+		<div id="loading" v-show="loading">
+			<div class="ui active inverted dimmer">
+				<div class="ui large text loader">Loading</div>
+			</div>
+		</div>
+		<router-view
+			v-show="!loading"
+			@toggle-header="toggleHeader"
+			@start-loading="loading = true"
+			@finish-loading="loading = false"
+		/>
 	</div>
 </template>
 
@@ -16,18 +26,27 @@
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	text-align: center;
 	color: #21413e;
+	display: flex;
+	flex-flow: column;
+	height: 100%;
 }
 #main {
-	padding: 2em;
 	margin: 0 auto;
-	background-size: 100% 100%;
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+	width: 100%;
 }
 #navigator {
 	margin: 0 auto;
+	width: 100%;
+	flex-grow: 0;
+	flex-shrink: 1;
+	flex-basis: auto;
 	a {
 		font-weight: bold;
 		font-size: medium;
-		color: #1b2c3d;
+		color: #657585;
 		&.router-link-exact-active {
 			color: #42b983;
 		}
@@ -49,15 +68,9 @@ import { Vue, Options } from "vue-class-component";
 })
 export default class App extends Vue {
 	headerVisible: boolean = true;
-	backgroundImage: string = "default.jpg";
-	get backgoundImagePath(): string {
-		return `url("./assets/image/background/${this.backgroundImage}")`
-	}
+	loading: boolean = false;
 	toggleHeader(visible: boolean) {
 		this.headerVisible = visible;
-	}
-	setBackgroundImage(filename: string) {
-		this.backgroundImage = filename;
 	}
 }
 </script>
