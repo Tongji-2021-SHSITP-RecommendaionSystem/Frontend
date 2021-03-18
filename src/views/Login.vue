@@ -63,13 +63,12 @@
 
 <script lang="ts">
 import { Vue, Options } from "vue-class-component";
-import { RouteLocationRaw } from "vue-router";
+import { RouteLocationNormalized, RouteLocationRaw } from "vue-router";
 import Axios, { AxiosError } from "axios";
 import $ from "jquery";
 
 class Props {
-	from?: RouteLocationRaw;
-	logout?: boolean;
+	pFrom?: string;
 }
 @Options({
 	emits: {
@@ -86,6 +85,7 @@ class Props {
 	},
 })
 export default class LoginView extends Vue.with(Props) {
+	from?: RouteLocationNormalized;
 	email: string = "";
 	password: string = "";
 	emailExist: boolean | null = null;
@@ -143,7 +143,8 @@ export default class LoginView extends Vue.with(Props) {
 	}
 
 	created() {
-		this.$emit("setBackgroundImage", "login.png");
+		if (this.pFrom)
+			this.from = JSON.parse(this.pFrom);
 		$(".icon.close", this.$el).on("click", function() {
 			$(this).parent().hide();
 		});

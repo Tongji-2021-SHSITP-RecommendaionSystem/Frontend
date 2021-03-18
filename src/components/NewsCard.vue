@@ -31,7 +31,7 @@ export default class NewsCard extends Vue.with(Props) {
 	get target() {
 		return {
 			name: "News",
-			params: {
+			query: {
 				id: this.id
 			}
 		}

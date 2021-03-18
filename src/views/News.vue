@@ -11,7 +11,8 @@
 <style lang="scss">
 #article {
 	text-align: left;
-	text-indent: 1em;
+	text-indent: 2em;
+	font-size: medium;
 }
 .ui.main.text.container {
 	margin-top: 2em;
@@ -59,15 +60,16 @@ export default class NewsView extends Vue.with(Props) {
 	mounted() {
 		this.startTime = Date.now();
 	}
-	unmounted() {
+	beforeUnmount() {
 		this.endTime = Date.now();
+		(document as any).global.pending = true;
 		Axios.post("/api/user/readNews", null, {
 			params: {
 				id: this.id,
 				startTime: this.startTime,
 				endTime: this.endTime
 			}
-		});
+		}).then(() => (document as any).global.pending = false);
 	}
 }
 </script>

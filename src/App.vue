@@ -3,19 +3,19 @@
 		<div class="ui inverted secondary menu">
 			<router-link class="item" to="/">主页</router-link>
 			<router-link class="item" to="/about">关于</router-link>
-			<router-link class="item right" to="/login">登出</router-link>
+			<router-link class="item right" to="/login" @click="logout">登出</router-link>
 		</div>
 	</header>
 	<div id="main">
 		<div id="loading" v-show="loading">
 			<div class="ui active inverted dimmer">
-				<div class="ui large text loader">Loading</div>
+				<div class="ui large text loader">{{ loadingLabel }}</div>
 			</div>
 		</div>
 		<router-view
 			v-show="!loading"
 			@toggle-header="toggleHeader"
-			@start-loading="loading = true"
+			@start-loading="startLoading"
 			@finish-loading="loading = false"
 		/>
 	</div>
@@ -55,6 +55,7 @@
 </style>
 
 <script lang="ts">
+import Axios from "axios";
 import { Vue, Options } from "vue-class-component";
 @Options({
 	watch: {
@@ -64,13 +65,23 @@ import { Vue, Options } from "vue-class-component";
 				document.title = to.meta.title || "Beyonews";
 			},
 		},
-	},
+	}
 })
 export default class App extends Vue {
 	headerVisible: boolean = true;
 	loading: boolean = false;
+	pending: boolean = false;
+	loadingLabel: string = "载入中";
 	toggleHeader(visible: boolean) {
 		this.headerVisible = visible;
+	}
+	startLoading(label?: string) {
+		this.loading = true;
+		if (label)
+			this.loadingLabel = label;
+	}
+	logout() {
+		Axios.post("/api/user/logout");
 	}
 }
 </script>

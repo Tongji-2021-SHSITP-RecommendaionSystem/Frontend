@@ -29,13 +29,13 @@ const routes: Array<RouteRecordRaw> = [
 		component: RegisterView
 	},
 	{
-		path: "/news?id=:id",
+		path: "/news",
 		name: "News",
 		component: NewsView,
-		props: true,
+		props: route => ({ id: route.query.id })
 	},
 	{
-		path: "/exception?status=:status",
+		path: "/exception",
 		name: "Exception",
 		component: ExceptionView,
 		props: true
@@ -49,7 +49,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	if (to.name == "Exception") {
 		if (to.params.status == "401")
-			next({ name: "Login" });
+			next({
+				name: "Login",
+				params: {
+					pFrom: JSON.stringify(from),
+				}
+			});
 		else
 			next();
 	}

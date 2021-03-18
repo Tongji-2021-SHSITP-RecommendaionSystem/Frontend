@@ -25,6 +25,7 @@
 </style>
 
 <script lang="ts">
+import "basic-type-extensions";
 import Axios, { AxiosResponse, AxiosError } from "axios";
 import { Options, Vue } from 'vue-class-component';
 import NewsCard from "../components/NewsCard.vue";
@@ -40,7 +41,7 @@ class Props {
 		NewsCard,
 	},
 	emits: {
-		startLoading: () => true,
+		startLoading: (label?: string) => true,
 		finishLoading: () => true
 	}
 })
@@ -48,8 +49,10 @@ export default class HomeView extends Vue.with(Props) {
 	ready: boolean = false;
 	newsInfos!: News[];
 	async created() {
-		this.$emit("startLoading");
-		await Axios.get("/api/news/recommend", {
+		this.$emit("startLoading", "推荐中");
+		if ((document as any).global.pending === true)
+			await Promise.wait(() => !(document as any).global.pending, 100);
+		Axios.get("/api/news/recommend", {
 			params: { count: this.count ?? 10 }
 		}).then(
 			(response: AxiosResponse<API.News.Recommend.Response>) => {
