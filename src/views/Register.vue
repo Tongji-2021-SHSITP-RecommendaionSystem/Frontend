@@ -2,9 +2,10 @@
 	<div class="register">
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
-				<h2 class="ui black image header">
+				<h2 class="ui image header">
+					<div class="content">欢迎来到</div>
 					<img src="../assets/image/logo-pure.png" class="image" />
-					<div class="content">欢迎来到闻所未闻</div>
+					<div class="content">闻所未闻</div>
 				</h2>
 				<div class="ui form">
 					<div class="ui stacked segment">
@@ -59,12 +60,16 @@
 						</div>
 						<button
 							class="ui fluid large button"
-							:class="[registerButtonColor]"
+							:class="[registerButtonColor, loading]"
 							:disabled="status != 'Valid'"
 							@click="onSubmit"
 						>注册</button>
 					</div>
 					<div class="ui error message"></div>
+				</div>
+				<div class="ui error message" v-show="errorMessage != ''">
+					<i class="close icon"></i>
+					<div class="header">{{ errorMessage }}</div>
 				</div>
 				<div class="ui message">
 					已有账户？
@@ -84,31 +89,42 @@
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
 	background-size: 100% 100%;
+	.column {
+		opacity: 80%;
+		.ui.header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 1em;
+			.content {
+				padding: 0.5em;
+				color: rgb(34, 58, 85);
+			}
+		}
+		.ui.segment,
+		.ui.message {
+			background-color: rgba($color: #ffffff, $alpha: 0.5);
+		}
+	}
 }
 </style>
 
 <script lang="ts">
+import Axios, { AxiosError } from "axios";
 import { Vue, Options } from "vue-class-component";
 import { Color } from "../assets/types";
-import Axios from "axios";
-import settings from "../../../Backend/src/config"
-import { Router } from "vue-router";
 
 type RegisterStatus = "Incomplete" | "Invalid" | "Valid";
 
-Vue.registerHooks([
-	"beforeRouteEnter",
-	"beforeRouteLeave",
-	"beforeRouteUpdate",
-]);
 @Options({
 	emits: {
 		toggleHeader: (visible: boolean) => typeof visible == "boolean",
 	},
 })
 export default class RegisterView extends Vue {
-	$router!: Router;
+	loading: string = "";
 	timeLeft: number = 0;
+	errorMessage: string = "";
 	username: string = "";
 	password: string = "";
 	repeated: string = "";
@@ -164,23 +180,32 @@ export default class RegisterView extends Vue {
 					email: this.email,
 				},
 			});
-			this.timeLeft = Math.floor(settings.session.emailInterval / 1000);
+			this.timeLeft = 60;
 			const timer = setInterval(() => {
 				if (--this.timeLeft == 0) clearInterval(timer);
 			}, 1000);
 		}
 	}
 	onSubmit() {
+		this.loading = "loading";
+		(document as any).global.pending = true;
 		Axios.post("/api/user/register", {
 			username: this.username,
 			password: this.password,
 			email: this.email,
 			code: this.code,
-		}).then(response => {
-			console.log(response.status);
-			if (response.status % 100 == 2)
-				this.$router.push("/");
-		});
+		}).then(
+			response => {
+				this.loading = "";
+				(document as any).global.pending = false;
+				this.$router.push({ name: "Home" });
+			},
+			(error: AxiosError) => {
+				this.loading = "";
+				(document as any).global.pending = false;
+				this.errorMessage = error.response!.data
+			}
+		);
 	}
 
 	mounted() {

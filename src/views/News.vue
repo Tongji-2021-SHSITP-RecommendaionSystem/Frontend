@@ -1,21 +1,40 @@
 <template>
-	<div v-if="ready" class="ui main text container">
-		<a :href="url">
-			<h1 class="ui header">{{ title }}</h1>
-		</a>
-		<p class="meta">{{ `${formatDate(date)} ${source}` }}</p>
-		<div id="article" class="ui segment" v-html="article" />
+	<div class="news">
+		<div v-if="ready" class="ui main text container">
+			<div class="ui segment">
+				<a :href="url">
+					<h1 class="ui header">{{ title }}</h1>
+				</a>
+				<p class="meta">{{ `${formatDate(date)} ${source}` }}</p>
+			</div>
+			<div id="article" class="ui segment" v-html="article" />
+		</div>
 	</div>
 </template>
 
-<style lang="scss">
-#article {
-	text-align: left;
-	text-indent: 2em;
-	font-size: medium;
-}
-.ui.main.text.container {
-	margin-top: 2em;
+<style scoped lang="scss">
+.news {
+	width: 100%;
+	height: 100%;
+	padding-top: 2em;
+	background-image: url("../assets/image/background/news.jpg");
+	background-size: 100% auto;
+	.ui.main.text.container {
+		.ui.segment {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			background-color: rgba($color: #ffffff, $alpha: 0.85);
+		}
+		#article {
+			text-align: left;
+			font-size: large;
+			/deep/ p {
+				line-height: 2em;
+				text-indent: 2em;
+				margin: 2em auto;
+			}
+		}
+	}
 }
 </style>
 
@@ -24,6 +43,7 @@ import { Vue } from "vue-class-component";
 import Axios, { AxiosResponse, AxiosError } from "axios";
 import News from "../../../Backend/src/entity/News";
 import ErrorHandler from '../error-handler';
+import jQuery from "jquery";
 
 type Stringfy<T> = { [K in keyof T]: Function extends T[K] ? T[K] : string };
 class Props {
@@ -53,12 +73,20 @@ export default class NewsView extends Vue.with(Props) {
 				this.date = new Date(news.date);
 				this.article = news.article;
 				this.ready = true;
+				this.startTime = Date.now();
 			},
 			(error: AxiosError) => ErrorHandler.axios(error, this.$router)
 		);
 	}
-	mounted() {
-		this.startTime = Date.now();
+	updated() {
+		jQuery(this.$el).find("#article>p").each((index, element) => {
+			const el = jQuery(element);
+			if (el.children("img,video").length) {
+				el.css("display", "flex");
+				el.css("flex-direction", "column");
+				el.css("justify-content", "center");
+			}
+		});
 	}
 	beforeUnmount() {
 		this.endTime = Date.now();

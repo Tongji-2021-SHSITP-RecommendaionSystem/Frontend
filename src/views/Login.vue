@@ -2,9 +2,10 @@
 	<div class="login">
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
-				<h2 class="ui black image header">
+				<h2 class="ui image header">
+					<div class="content">账号</div>
 					<img src="../assets/image/logo-pure.png" class="image" />
-					<div class="content">账号登录</div>
+					<div class="content">登录</div>
 				</h2>
 				<div class="ui large form">
 					<div class="ui stacked segment">
@@ -55,8 +56,25 @@
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
 	background-size: 100% 100%;
-	.grid {
+	.ui.grid {
 		min-width: 25em;
+		.column {
+			opacity: 80%;
+			.ui.header {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-bottom: 1em;
+				.content {
+					padding: 0.5em;
+					color: rgb(34, 58, 85);
+				}
+			}
+			.ui.segment,
+			.ui.message {
+				background-color: rgba($color: #ffffff, $alpha: 0.6);
+			}
+		}
 	}
 }
 </style>

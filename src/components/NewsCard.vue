@@ -17,6 +17,12 @@
 	</div>
 </template>
 
+<style lang="scss">
+.ui.card {
+	background-color: rgba($color: #ffffff, $alpha: 0.8);
+}
+</style>
+
 <script lang="ts">
 import { Vue } from "vue-class-component";
 class Props {
