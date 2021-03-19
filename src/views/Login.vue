@@ -3,7 +3,7 @@
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui black image header">
-					<img src="../assets/image/logo.png" class="image" />
+					<img src="../assets/image/logo-pure.png" class="image" />
 					<div class="content">账号登录</div>
 				</h2>
 				<div class="ui large form">

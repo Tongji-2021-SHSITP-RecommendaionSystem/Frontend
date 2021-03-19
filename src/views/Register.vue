@@ -3,7 +3,7 @@
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui black image header">
-					<img src="../assets/image/logo.png" class="image" />
+					<img src="../assets/image/logo-pure.png" class="image" />
 					<div class="content">欢迎来到闻所未闻</div>
 				</h2>
 				<div class="ui form">
@@ -91,6 +91,7 @@
 import { Vue, Options } from "vue-class-component";
 import { Color } from "../assets/types";
 import Axios from "axios";
+import settings from "../../../Backend/src/config"
 import { Router } from "vue-router";
 
 type RegisterStatus = "Incomplete" | "Invalid" | "Valid";
@@ -103,7 +104,6 @@ Vue.registerHooks([
 @Options({
 	emits: {
 		toggleHeader: (visible: boolean) => typeof visible == "boolean",
-		toggleFooter: (visible: boolean) => typeof visible == "boolean",
 	},
 })
 export default class RegisterView extends Vue {
@@ -164,7 +164,7 @@ export default class RegisterView extends Vue {
 					email: this.email,
 				},
 			});
-			this.timeLeft = 60;
+			this.timeLeft = Math.floor(settings.session.emailInterval / 1000);
 			const timer = setInterval(() => {
 				if (--this.timeLeft == 0) clearInterval(timer);
 			}, 1000);
