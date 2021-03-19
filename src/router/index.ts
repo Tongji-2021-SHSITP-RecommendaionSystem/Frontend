@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router"
 import HomeView from "../views/Home.vue"
-import About from "../views/About.vue"
 import LoginView from "../views/Login.vue"
 import RegisterView from "../views/Register.vue"
 import NewsView from "../views/News.vue"
@@ -11,11 +10,6 @@ const routes: Array<RouteRecordRaw> = [
 		path: "/",
 		name: "Home",
 		component: HomeView
-	},
-	{
-		path: "/about",
-		name: "About",
-		component: About
 	},
 	{
 		path: "/login",
@@ -47,18 +41,21 @@ const router = createRouter({
 	routes,
 });
 router.beforeEach((to, from, next) => {
+	const pFrom = JSON.stringify({
+		name: from.name,
+		query: from.query,
+		params: from.params
+	});
 	if (to.name == "Exception") {
 		if (to.params.status == "401")
 			next({
 				name: "Login",
-				params: {
-					pFrom: JSON.stringify(from),
-				}
+				params: { pFrom: pFrom }
 			});
 		else
 			next();
 	}
 	else
 		next();
-})
+});
 export default router

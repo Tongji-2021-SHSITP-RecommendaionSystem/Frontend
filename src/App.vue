@@ -2,7 +2,8 @@
 	<header id="navigator" class="ui inverted segment" v-if="headerVisible">
 		<div class="ui inverted secondary menu">
 			<router-link class="item" to="/">主页</router-link>
-			<router-link class="item" to="/about">关于</router-link>
+			<a href="https://github.com/truemogician/news-recommendation-frontend" class="item">仓库</a>
+			<a href="https://github.com/truemogician" class="item">作者</a>
 			<router-link class="item right" to="/login" @click="logout">登出</router-link>
 		</div>
 	</header>

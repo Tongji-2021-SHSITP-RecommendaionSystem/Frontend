@@ -55,11 +55,11 @@
 	justify-content: center;
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
-	background-size: 100% 100%;
+	background-size: cover;
 	.ui.grid {
 		min-width: 25em;
 		.column {
-			opacity: 80%;
+			opacity: 0.8;
 			.ui.header {
 				display: flex;
 				align-items: center;
@@ -85,6 +85,7 @@ import { RouteLocationNormalized, RouteLocationRaw } from "vue-router";
 import Axios, { AxiosError } from "axios";
 import $ from "jquery";
 
+type RouteLocationSimple = Pick<RouteLocationNormalized, "name" | "query" | "params">;
 class Props {
 	pFrom?: string;
 }
@@ -103,7 +104,7 @@ class Props {
 	},
 })
 export default class LoginView extends Vue.with(Props) {
-	from?: RouteLocationNormalized;
+	from?: RouteLocationSimple;
 	email: string = "";
 	password: string = "";
 	emailExist: boolean | null = null;
@@ -140,16 +141,21 @@ export default class LoginView extends Vue.with(Props) {
 		}
 	}
 	onLogin() {
+		const target: RouteLocationRaw = {};
+		if (this.from)
+			Object.assign(target, this.from);
+		else
+			target.name = "Home";
 		Axios.get("/api/user/login", {
 			params: {
 				email: this.email,
 				password: this.password,
 			},
 		}).then(
-			_ => this.$router.push(this.from ?? "/"),
+			_ => this.$router.push(target),
 			(error: AxiosError) => {
 				if (error.response!.status == 400)
-					this.$router.push(this.from ?? "/");
+					this.$router.push(target);
 				else
 					this.errorMessage = error.response?.data;
 			}
@@ -163,12 +169,12 @@ export default class LoginView extends Vue.with(Props) {
 	created() {
 		if (this.pFrom)
 			this.from = JSON.parse(this.pFrom);
-		$(".icon.close", this.$el).on("click", function() {
-			$(this).parent().hide();
-		});
 	}
 	mounted() {
 		this.$emit("toggleHeader", false);
+		$(".icon.close", this.$el).on("click", function() {
+			$(this).parent().hide();
+		});
 	}
 	unmounted() {
 		this.$emit("toggleHeader", true);

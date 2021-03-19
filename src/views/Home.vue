@@ -1,5 +1,5 @@
 <template>
-	<div id="news" class="ui five column grid" v-if="ready">
+	<div id="news" class="ui grid" :class="gridColumn" v-if="ready">
 		<div class="column" style="padding:1em" v-for="info in newsInfos" :key="info.id">
 			<news-card
 				style="margin:0 auto"
@@ -20,7 +20,6 @@
 	margin: 0;
 	padding: 2em 3em;
 	background-image: url("../assets/image/background/default.jpg");
-	background-size: 100% 100%;
 }
 </style>
 
@@ -33,6 +32,7 @@ import ErrorHandler from "../error-handler"
 import { API } from "../../../Backend/src/api"
 import News from '../../../Backend/src/entity/News';
 
+const translator = ["zero", "one", "two", "three", "four", "five", "six"];
 class Props {
 	count?: number
 }
@@ -48,8 +48,18 @@ class Props {
 export default class HomeView extends Vue.with(Props) {
 	ready: boolean = false;
 	newsInfos!: News[];
+	height!: number;
+	width!: number;
+	gridColumn: string[] = ["five", "column"];
+	onWindowResize() {
+		this.height = window.innerHeight;
+		this.width = window.innerWidth;
+		this.gridColumn.splice(0, 1, translator[Math.floor(this.width / 300)]);
+	}
+
 	async created() {
 		this.$emit("startLoading", "推荐中");
+		this.onWindowResize();
 		if ((document as any).global.pending === true)
 			await Promise.wait(() => !(document as any).global.pending, 100);
 		Axios.get("/api/news/recommend", {
@@ -72,8 +82,12 @@ export default class HomeView extends Vue.with(Props) {
 			(error: AxiosError) => ErrorHandler.axios(error, this.$router)
 		);
 	}
+	mounted() {
+		window.addEventListener("resize", this.onWindowResize);
+	}
 	unmounted() {
 		this.$emit("finishLoading");
+		window.removeEventListener("resize", this.onWindowResize);
 	}
 }
 </script>

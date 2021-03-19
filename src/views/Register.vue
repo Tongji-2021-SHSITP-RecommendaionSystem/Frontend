@@ -88,9 +88,9 @@
 	justify-content: center;
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
-	background-size: 100% 100%;
+	background-size: cover;
 	.column {
-		opacity: 80%;
+		opacity: 0.8;
 		.ui.header {
 			display: flex;
 			align-items: center;
@@ -210,6 +210,9 @@ export default class RegisterView extends Vue {
 
 	mounted() {
 		this.$emit("toggleHeader", false);
+		$(".icon.close", this.$el).on("click", function() {
+			$(this).parent().hide();
+		});
 	}
 	unmounted() {
 		this.$emit("toggleHeader", true);
