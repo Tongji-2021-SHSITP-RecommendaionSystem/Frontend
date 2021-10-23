@@ -1,6 +1,11 @@
 <template>
 	<div id="news" class="ui grid" :class="gridColumn" v-if="ready">
-		<div class="column" style="padding:1em" v-for="info in newsInfos" :key="info.id">
+		<div
+			class="column"
+			style="padding:1em"
+			v-for="info in newsInfos"
+			:key="info.id"
+		>
 			<news-card
 				style="margin:0 auto"
 				:id="info.id"
@@ -26,15 +31,14 @@
 <script lang="ts">
 import "basic-type-extensions";
 import Axios, { AxiosResponse, AxiosError } from "axios";
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue } from "vue-class-component";
+import { News } from "news-recommendation-entity";
 import NewsCard from "../components/NewsCard.vue";
-import ErrorHandler from "../error-handler"
-import { API } from "../../../Backend/src/api"
-import News from '../../../Backend/src/entity/News';
+import ErrorHandler from "../error-handler";
 
 const translator = ["zero", "one", "two", "three", "four", "five", "six"];
 class Props {
-	count?: number
+	count?: number;
 }
 @Options({
 	components: {
@@ -42,8 +46,8 @@ class Props {
 	},
 	emits: {
 		startLoading: (label?: string) => true,
-		finishLoading: () => true
-	}
+		finishLoading: () => true,
+	},
 })
 export default class HomeView extends Vue.with(Props) {
 	ready: boolean = false;
@@ -62,22 +66,23 @@ export default class HomeView extends Vue.with(Props) {
 		this.onWindowResize();
 		if ((document as any).global.pending === true)
 			await Promise.wait(() => !(document as any).global.pending, 100);
-		Axios.get("/api/news/recommend", {
-			params: { count: this.count ?? 10 }
+		Axios.get("/api/news/recommendation", {
+			params: { count: this.count ?? 10 },
 		}).then(
-			(response: AxiosResponse<API.News.Recommend.Response>) => {
-				Axios.get<API.News.GetNewsInfos.Response>("/api/news/getNewsInfos", {
+			(response: AxiosResponse<Record<"ids", number[]>>) => {
+				Axios.get("/api/news/infos", {
 					params: {
-						ids: response.data.ids
-					}
+						ids: response.data.ids,
+					},
 				}).then(
 					response => {
 						this.newsInfos = response.data.infos;
 						this.ready = true;
 						this.$emit("finishLoading");
 					},
-					(error: AxiosError) => ErrorHandler.axios(error, this.$router)
-				)
+					(error: AxiosError) =>
+						ErrorHandler.axios(error, this.$router)
+				);
 			},
 			(error: AxiosError) => ErrorHandler.axios(error, this.$router)
 		);

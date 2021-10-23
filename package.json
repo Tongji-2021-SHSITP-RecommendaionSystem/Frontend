@@ -12,6 +12,7 @@
 		"basic-type-extensions": "^1.4.0",
 		"core-js": "^3.6.5",
 		"jquery": "^3.5.1",
+		"news-recommendation-entity": "file:../Entity",
 		"vue": "^3.0.0",
 		"vue-class-component": "^8.0.0-0",
 		"vue-router": "^4.0.0-0"

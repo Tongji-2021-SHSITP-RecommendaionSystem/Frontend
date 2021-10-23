@@ -2,9 +2,15 @@
 	<header id="navigator" class="ui inverted segment" v-if="headerVisible">
 		<div class="ui inverted secondary menu">
 			<router-link class="item" to="/">主页</router-link>
-			<a href="https://github.com/truemogician/news-recommendation-frontend" class="item">仓库</a>
+			<a
+				href="https://github.com/truemogician/news-recommendation-frontend"
+				class="item"
+				>仓库</a
+			>
 			<a href="https://github.com/truemogician" class="item">作者</a>
-			<router-link class="item right" to="/login" @click="logout">登出</router-link>
+			<router-link class="item right" to="/login" @click="logout"
+				>登出</router-link
+			>
 		</div>
 	</header>
 	<div id="main">
@@ -66,7 +72,7 @@ import { Vue, Options } from "vue-class-component";
 				document.title = to.meta.title || "Beyonews";
 			},
 		},
-	}
+	},
 })
 export default class App extends Vue {
 	headerVisible: boolean = true;
@@ -78,11 +84,10 @@ export default class App extends Vue {
 	}
 	startLoading(label?: string) {
 		this.loading = true;
-		if (label)
-			this.loadingLabel = label;
+		if (label) this.loadingLabel = label;
 	}
 	logout() {
-		Axios.post("/api/user/logout");
+		Axios.delete("/api/user/login");
 	}
 }
 </script>

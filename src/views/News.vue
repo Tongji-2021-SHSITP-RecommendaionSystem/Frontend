@@ -40,10 +40,10 @@
 
 <script lang="ts">
 import { Vue } from "vue-class-component";
-import Axios, { AxiosResponse, AxiosError } from "axios";
-import News from "../../../Backend/src/entity/News";
-import ErrorHandler from '../error-handler';
 import jQuery from "jquery";
+import Axios, { AxiosResponse, AxiosError } from "axios";
+import { News } from "news-recommendation-entity";
+import ErrorHandler from "../error-handler";
 
 type Stringfy<T> = { [K in keyof T]: Function extends T[K] ? T[K] : string };
 class Props {
@@ -59,11 +59,12 @@ export default class NewsView extends Vue.with(Props) {
 	startTime!: number;
 	endTime!: number;
 	formatDate(date: Date): string {
-		return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+		return `${date.getFullYear()}/${date.getMonth() +
+			1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 	}
 	async created() {
-		Axios.get("/api/news/getNews", {
-			params: { id: this.id }
+		Axios.get("/api/news", {
+			params: { id: this.id },
 		}).then(
 			(response: AxiosResponse<Stringfy<News>>) => {
 				const news = response.data;
@@ -79,25 +80,27 @@ export default class NewsView extends Vue.with(Props) {
 		);
 	}
 	updated() {
-		jQuery(this.$el).find("#article>p").each((index, element) => {
-			const el = jQuery(element);
-			if (el.children("img,video").length) {
-				el.css("display", "flex");
-				el.css("flex-direction", "column");
-				el.css("justify-content", "center");
-			}
-		});
+		jQuery(this.$el)
+			.find("#article>p")
+			.each((index, element) => {
+				const el = jQuery(element);
+				if (el.children("img,video").length) {
+					el.css("display", "flex");
+					el.css("flex-direction", "column");
+					el.css("justify-content", "center");
+				}
+			});
 	}
 	beforeUnmount() {
 		this.endTime = Date.now();
 		(document as any).global.pending = true;
-		Axios.post("/api/user/readNews", null, {
+		Axios.post("/api/user/history", null, {
 			params: {
 				id: this.id,
 				startTime: this.startTime,
-				endTime: this.endTime
-			}
-		}).then(() => (document as any).global.pending = false);
+				endTime: this.endTime,
+			},
+		}).then(() => ((document as any).global.pending = false));
 	}
 }
 </script>

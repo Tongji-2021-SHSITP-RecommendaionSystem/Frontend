@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
 		component: ExceptionView,
 		props: true
 	}
-]
+];
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -58,4 +58,4 @@ router.beforeEach((to, from, next) => {
 	else
 		next();
 });
-export default router
+export default router;

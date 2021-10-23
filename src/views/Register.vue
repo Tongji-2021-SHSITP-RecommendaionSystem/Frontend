@@ -9,20 +9,36 @@
 				</h2>
 				<div class="ui form">
 					<div class="ui stacked segment">
-						<div class="field" :class="[
-							inputStatus(usernameValid, isEmpty(username)),
-						]">
+						<div
+							class="field"
+							:class="[
+								inputStatus(usernameValid, isEmpty(username)),
+							]"
+						>
 							<div class="ui left icon input">
 								<i class="user icon"></i>
-								<input type="text" name="username" placeholder="用户名" v-model="username" />
+								<input
+									type="text"
+									name="username"
+									placeholder="用户名"
+									v-model="username"
+								/>
 							</div>
 						</div>
-						<div class="field" :class="[
-							inputStatus(passwordValid, isEmpty(password)),
-						]">
+						<div
+							class="field"
+							:class="[
+								inputStatus(passwordValid, isEmpty(password)),
+							]"
+						>
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="password" placeholder="密码" v-model="password" />
+								<input
+									type="password"
+									name="password"
+									placeholder="密码"
+									v-model="password"
+								/>
 							</div>
 						</div>
 						<div
@@ -36,26 +52,51 @@
 						>
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="repeatPassword" placeholder="重复密码" v-model="repeated" />
+								<input
+									type="password"
+									name="repeatPassword"
+									placeholder="重复密码"
+									v-model="repeated"
+								/>
 							</div>
 						</div>
-						<div class="field" :class="[inputStatus(emailValid, isEmpty(email))]">
+						<div
+							class="field"
+							:class="[inputStatus(emailValid, isEmpty(email))]"
+						>
 							<div class="ui left icon input">
 								<i class="envelope icon"></i>
-								<input type="text" name="email" placeholder="邮箱地址" v-model="email" />
+								<input
+									type="text"
+									name="email"
+									placeholder="邮箱地址"
+									v-model="email"
+								/>
 							</div>
 						</div>
-						<div class="field" :class="[inputStatus(codeValid, isEmpty(code))]">
+						<div
+							class="field"
+							:class="[inputStatus(codeValid, isEmpty(code))]"
+						>
 							<div class="ui left icon input">
 								<i class="envelope open outline icon"></i>
-								<input type="text" name="code" placeholder="验证码" v-model="code" />
+								<input
+									type="text"
+									name="code"
+									placeholder="验证码"
+									v-model="code"
+								/>
 								<button
 									v-if="timeLeft == 0"
 									class="ui green button"
 									:disabled="!/^\w+@\w+\.+\w+$/.test(email)"
 									@click="onSendEmail"
-								>发送验证邮件</button>
-								<button v-else class="ui teal button" disabled>{{ timeLeft }}s</button>
+								>
+									发送验证邮件
+								</button>
+								<button v-else class="ui teal button" disabled>
+									{{ timeLeft }}s
+								</button>
 							</div>
 						</div>
 						<button
@@ -63,7 +104,9 @@
 							:class="[registerButtonColor, loading]"
 							:disabled="status != 'Valid'"
 							@click="onSubmit"
-						>注册</button>
+						>
+							注册
+						</button>
 					</div>
 					<div class="ui error message"></div>
 				</div>
@@ -175,7 +218,7 @@ export default class RegisterView extends Vue {
 	}
 	onSendEmail() {
 		if (this.timeLeft == 0) {
-			Axios.post("/api/user/sendEmail", null, {
+			Axios.post("/api/user/validation", null, {
 				params: {
 					email: this.email,
 				},
@@ -189,7 +232,7 @@ export default class RegisterView extends Vue {
 	onSubmit() {
 		this.loading = "loading";
 		(document as any).global.pending = true;
-		Axios.post("/api/user/register", {
+		Axios.post("/api/user", {
 			username: this.username,
 			password: this.password,
 			email: this.email,
@@ -203,7 +246,7 @@ export default class RegisterView extends Vue {
 			(error: AxiosError) => {
 				this.loading = "";
 				(document as any).global.pending = false;
-				this.errorMessage = error.response!.data
+				this.errorMessage = error.response!.data;
 			}
 		);
 	}
@@ -211,7 +254,9 @@ export default class RegisterView extends Vue {
 	mounted() {
 		this.$emit("toggleHeader", false);
 		$(".icon.close", this.$el).on("click", function() {
-			$(this).parent().hide();
+			$(this)
+				.parent()
+				.hide();
 		});
 	}
 	unmounted() {

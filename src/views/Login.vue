@@ -12,7 +12,13 @@
 						<div class="field" :class="[emailInputStatus]">
 							<div class="ui left icon input">
 								<i class="user icon"></i>
-								<input type="text" name="email" placeholder="邮箱" v-model="email" @focusout="onFocusOut" />
+								<input
+									type="text"
+									name="email"
+									placeholder="邮箱"
+									v-model="email"
+									@focusout="onFocusOut"
+								/>
 							</div>
 						</div>
 						<div class="field">
@@ -31,7 +37,9 @@
 							class="ui fluid large teal submit button"
 							:disabled="!emailExist || isEmpty(password)"
 							@click="onLogin"
-						>登录</button>
+						>
+							登录
+						</button>
 					</div>
 				</div>
 				<div class="ui error message" v-show="errorMessage != ''">
@@ -85,21 +93,22 @@ import { RouteLocationNormalized, RouteLocationRaw } from "vue-router";
 import Axios, { AxiosError } from "axios";
 import $ from "jquery";
 
-type RouteLocationSimple = Pick<RouteLocationNormalized, "name" | "query" | "params">;
+type RouteLocationSimple = Pick<
+	RouteLocationNormalized,
+	"name" | "query" | "params"
+>;
 class Props {
 	pFrom?: string;
 }
 @Options({
 	emits: {
 		toggleHeader: (visible: boolean) => typeof visible == "boolean",
-		setBackgroundImage: (filename: string) => typeof filename == "string"
+		setBackgroundImage: (filename: string) => typeof filename == "string",
 	},
 	watch: {
 		emailExist(this: LoginView, value) {
-			if (value == false)
-				this.errorMessage = "邮箱未注册";
-			else
-				this.errorMessage = "";
+			if (value == false) this.errorMessage = "邮箱未注册";
+			else this.errorMessage = "";
 		},
 	},
 })
@@ -131,7 +140,7 @@ export default class LoginView extends Vue.with(Props) {
 		if (this.isEmpty(this.email)) this.emailExist = null;
 		else if (!/^\w+@\w+\.+\w+$/.test(this.email)) this.emailExist = false;
 		else {
-			Axios.get("/api/user/hasUser", {
+			Axios.get("/api/user/email", {
 				params: {
 					email: this.email,
 				},
@@ -142,38 +151,32 @@ export default class LoginView extends Vue.with(Props) {
 	}
 	onLogin() {
 		const target: RouteLocationRaw = {};
-		if (this.from)
-			Object.assign(target, this.from);
-		else
-			target.name = "Home";
-		Axios.get("/api/user/login", {
-			params: {
-				email: this.email,
-				password: this.password,
-			},
+		if (this.from) Object.assign(target, this.from);
+		else target.name = "Home";
+		Axios.post("/api/user/login", {
+			email: this.email,
+			password: this.password,
 		}).then(
 			_ => this.$router.push(target),
 			(error: AxiosError) => {
-				if (error.response!.status == 400)
-					this.$router.push(target);
-				else
-					this.errorMessage = error.response?.data;
+				if (error.response!.status == 400) this.$router.push(target);
+				else this.errorMessage = error.response?.data;
 			}
 		);
 	}
 	onKeyPress(key: KeyboardEvent) {
-		if (key.code == "Enter")
-			this.onLogin();
+		if (key.code == "Enter") this.onLogin();
 	}
 
 	created() {
-		if (this.pFrom)
-			this.from = JSON.parse(this.pFrom);
+		if (this.pFrom) this.from = JSON.parse(this.pFrom);
 	}
 	mounted() {
 		this.$emit("toggleHeader", false);
 		$(".icon.close", this.$el).on("click", function() {
-			$(this).parent().hide();
+			$(this)
+				.parent()
+				.hide();
 		});
 	}
 	unmounted() {
