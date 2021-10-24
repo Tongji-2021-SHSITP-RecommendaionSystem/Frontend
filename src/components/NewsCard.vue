@@ -6,7 +6,7 @@
 		</div>
 		<div class="image">
 			<router-link :to="target">
-				<img style="height:100%;width:100%" :src="image" />
+				<img style="height:100%; width:100%" :src="image" />
 			</router-link>
 		</div>
 		<div class="content">
@@ -17,14 +17,14 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 .ui.card {
-	background-color: rgba($color: #ffffff, $alpha: 0.8);
+	background-color: rgba(255, 255, 255, 0.8);
 }
 </style>
 
 <script lang="ts">
-import { Vue } from "vue-class-component";
+import { Vue, Options } from "vue-class-component";
 class Props {
 	id!: string;
 	title!: string;
@@ -33,14 +33,24 @@ class Props {
 	date!: string;
 	source!: string;
 }
+@Options({
+	props: {
+		id: String,
+		title: String,
+		url: String,
+		image: String,
+		date: String,
+		source: String,
+	},
+})
 export default class NewsCard extends Vue.with(Props) {
 	get target() {
 		return {
 			name: "News",
 			query: {
-				id: this.id
-			}
-		}
+				id: this.id,
+			},
+		};
 	}
 	interval(from: Date, to?: Date): string {
 		to = to ?? new Date();

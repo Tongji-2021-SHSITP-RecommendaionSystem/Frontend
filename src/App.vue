@@ -3,7 +3,7 @@
 		<div class="ui inverted secondary menu">
 			<router-link class="item" to="/">主页</router-link>
 			<a
-				href="https://github.com/truemogician/news-recommendation-frontend"
+				href="https://github.com/Tongji-2021-SHSITP-RecommendaionSystem"
 				class="item"
 				>仓库</a
 			>
@@ -28,7 +28,7 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	text-align: center;
@@ -50,14 +50,14 @@
 	flex-grow: 0;
 	flex-shrink: 1;
 	flex-basis: auto;
-	a {
-		font-weight: bold;
-		font-size: medium;
-		color: #657585;
-		&.router-link-exact-active {
-			color: #42b983;
-		}
-	}
+}
+#navigator a {
+	font-weight: bold;
+	font-size: medium;
+	color: #657585;
+}
+#navigator a.router-link-exact-active {
+	color: #42b983;
 }
 </style>
 

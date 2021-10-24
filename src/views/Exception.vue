@@ -6,11 +6,17 @@
 </template>
 
 <script lang="ts">
-import { Vue } from "vue-class-component"
+import { Vue, Options } from "vue-class-component";
 
 class Props {
 	status!: number;
 	message!: string;
 }
-export default class ExceptionView extends Vue.with(Props) { }
+@Options({
+	props: {
+		status: Number,
+		message: String,
+	},
+})
+export default class ExceptionView extends Vue.with(Props) {}
 </script>

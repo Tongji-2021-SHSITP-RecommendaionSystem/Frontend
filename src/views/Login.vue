@@ -55,7 +55,7 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 .login {
 	width: 100%;
 	height: 100%;
@@ -64,26 +64,26 @@
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
 	background-size: cover;
-	.ui.grid {
-		min-width: 25em;
-		.column {
-			opacity: 0.8;
-			.ui.header {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-bottom: 1em;
-				.content {
-					padding: 0.5em;
-					color: rgb(34, 58, 85);
-				}
-			}
-			.ui.segment,
-			.ui.message {
-				background-color: rgba($color: #ffffff, $alpha: 0.6);
-			}
-		}
-	}
+}
+.login .ui.grid {
+	min-width: 25em;
+}
+.login .ui.grid .column {
+	opacity: 0.8;
+}
+.login .ui.grid .column .ui.header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 1em;
+}
+.login .ui.grid .column .ui.header .content {
+	padding: 0.5em;
+	color: #223a55;
+}
+.login .ui.grid .column .ui.segment,
+.login .ui.grid .column .ui.message {
+	background-color: rgba(255, 255, 255, 0.6);
 }
 </style>
 
@@ -145,7 +145,7 @@ export default class LoginView extends Vue.with(Props) {
 					email: this.email,
 				},
 			}).then(response => {
-				this.emailExist = response.data.exist;
+				this.emailExist = (response.data as any).exist;
 			});
 		}
 	}
@@ -160,7 +160,7 @@ export default class LoginView extends Vue.with(Props) {
 			_ => this.$router.push(target),
 			(error: AxiosError) => {
 				if (error.response!.status == 400) this.$router.push(target);
-				else this.errorMessage = error.response?.data;
+				else this.errorMessage = error.response?.data as string;
 			}
 		);
 	}

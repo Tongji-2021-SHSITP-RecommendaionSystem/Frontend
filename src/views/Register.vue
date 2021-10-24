@@ -123,7 +123,7 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 .register {
 	width: 100%;
 	height: 100%;
@@ -132,23 +132,23 @@
 	align-items: center;
 	background-image: url("../assets/image/background/login.png");
 	background-size: cover;
-	.column {
-		opacity: 0.8;
-		.ui.header {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin-bottom: 1em;
-			.content {
-				padding: 0.5em;
-				color: rgb(34, 58, 85);
-			}
-		}
-		.ui.segment,
-		.ui.message {
-			background-color: rgba($color: #ffffff, $alpha: 0.5);
-		}
-	}
+}
+.register .column {
+	opacity: 0.8;
+}
+.register .column .ui.header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 1em;
+}
+.register .column .ui.header .content {
+	padding: 0.5em;
+	color: #223a55;
+}
+.register .column .ui.segment,
+.register .column .ui.message {
+	background-color: rgba(255, 255, 255, 0.5);
 }
 </style>
 
@@ -238,7 +238,7 @@ export default class RegisterView extends Vue {
 			email: this.email,
 			code: this.code,
 		}).then(
-			response => {
+			() => {
 				this.loading = "";
 				(document as any).global.pending = false;
 				this.$router.push({ name: "Home" });
@@ -246,7 +246,7 @@ export default class RegisterView extends Vue {
 			(error: AxiosError) => {
 				this.loading = "";
 				(document as any).global.pending = false;
-				this.errorMessage = error.response!.data;
+				this.errorMessage = error.response!.data as string;
 			}
 		);
 	}

@@ -3,54 +3,29 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"serve": "vue-cli-service serve",
-		"build": "vue-cli-service build",
-		"lint": "vue-cli-service lint"
+		"serve": "vue-cli-service serve --port 8082",
+		"build": "vue-cli-service build"
 	},
 	"dependencies": {
-		"axios": "^0.21.1",
-		"basic-type-extensions": "^1.4.0",
-		"core-js": "^3.6.5",
-		"jquery": "^3.5.1",
+		"axios": "^0.23.0",
+		"basic-type-extensions": "^1.16.0",
+		"core-js": "^3.18.3",
+		"fomantic-ui": "^2.8.8",
+		"jquery": "^3.6.0",
 		"news-recommendation-entity": "file:../Entity",
 		"vue": "^3.0.0",
 		"vue-class-component": "^8.0.0-0",
-		"vue-router": "^4.0.0-0"
+		"vue-router": "^4.0.0",
+		"webpack": "^4.46.0"
 	},
 	"devDependencies": {
-		"@types/jquery": "^3.5.5",
+		"@types/jquery": "^3.5.8",
 		"@types/semantic-ui": "^2.2.7",
-		"@typescript-eslint/eslint-plugin": "^2.33.0",
-		"@typescript-eslint/parser": "^2.33.0",
-		"@vue/cli-plugin-babel": "~4.5.0",
-		"@vue/cli-plugin-router": "~4.5.0",
-		"@vue/cli-plugin-typescript": "~4.5.0",
-		"@vue/cli-service": "~4.5.0",
-		"@vue/compiler-sfc": "^3.0.0",
-		"@vue/eslint-config-typescript": "^5.0.2",
-		"node-sass": "^4.12.0",
-		"sass-loader": "^8.0.2",
-		"typescript": "~3.9.3",
+		"@vue/cli-plugin-router": "~4.5.14",
+		"@vue/cli-plugin-typescript": "~4.5.14",
+		"@vue/cli-service": "~4.5.14",
+		"@vue/compiler-sfc": "^3.2.20",
+		"typescript": "~4.4.4",
 		"vue-property-decorator": "^9.1.2"
-	},
-	"eslintConfig": {
-		"root": true,
-		"env": {
-			"node": true
-		},
-		"extends": [
-			"plugin:vue/vue3-essential",
-			"eslint:recommended",
-			"@vue/typescript/recommended"
-		],
-		"parserOptions": {
-			"ecmaVersion": 2020
-		},
-		"rules": {}
-	},
-	"browserslist": [
-		"> 1%",
-		"last 2 versions",
-		"not dead"
-	]
+	}
 }

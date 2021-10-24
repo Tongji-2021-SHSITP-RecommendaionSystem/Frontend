@@ -6,7 +6,7 @@
 			v-for="info in newsInfos"
 			:key="info.id"
 		>
-			<news-card
+			<NewsCard
 				style="margin:0 auto"
 				:id="info.id"
 				:title="info.title"
@@ -19,7 +19,7 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 #news {
 	height: 100%;
 	margin: 0;
@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import "basic-type-extensions";
-import Axios, { AxiosResponse, AxiosError } from "axios";
+import Axios, { AxiosError } from "axios";
 import { Options, Vue } from "vue-class-component";
 import { News } from "news-recommendation-entity";
 import NewsCard from "../components/NewsCard.vue";
@@ -69,14 +69,14 @@ export default class HomeView extends Vue.with(Props) {
 		Axios.get("/api/news/recommendation", {
 			params: { count: this.count ?? 10 },
 		}).then(
-			(response: AxiosResponse<Record<"ids", number[]>>) => {
+			response => {
 				Axios.get("/api/news/infos", {
 					params: {
-						ids: response.data.ids,
+						ids: (response.data as Record<"ids", number[]>).ids,
 					},
 				}).then(
 					response => {
-						this.newsInfos = response.data.infos;
+						this.newsInfos = (response.data as any).infos;
 						this.ready = true;
 						this.$emit("finishLoading");
 					},
