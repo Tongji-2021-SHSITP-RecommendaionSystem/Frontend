@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Vue, Options } from "vue-class-component";
 class Props {
-	id!: string;
+	id!: number;
 	title!: string;
 	url!: string;
 	image!: string;
@@ -35,7 +35,7 @@ class Props {
 }
 @Options({
 	props: {
-		id: String,
+		id: Number,
 		title: String,
 		url: String,
 		image: String,
