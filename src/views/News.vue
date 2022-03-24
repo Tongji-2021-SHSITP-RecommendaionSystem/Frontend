@@ -1,18 +1,36 @@
 <template>
 	<div class="news">
-		<div id="operation" v-if="ready" class="ui container">
-			<i
-				class="thumbs up icon huge"
-				:class="{ outline: thumb != true }"
-				@click="() => feedback(true)"
-			/>
-			<i
-				class="thumbs down icon huge"
-				:class="{ outline: thumb != false }"
-				@click="() => feedback(false)"
-			/>
-		</div>
 		<div v-if="ready" class="ui main text container">
+			<div id="operation" v-if="ready">
+				<span style="height:3em">
+					<img
+						v-if="reaction == 1"
+						src="../assets/image/thumb-up.png"
+						@click="() => react(1)"
+					/>
+					<img
+						v-else
+						src="../assets/image/thumb-up-outline.png"
+						@click="() => react(1)"
+					/>
+					<span style="color:springgreen">{{ approvalCount }}</span>
+				</span>
+				<span style="height:3em">
+					<img
+						v-if="reaction == 2"
+						src="../assets/image/thumb-up.png"
+						style="transform:rotate(180deg)"
+						@click="() => react(2)"
+					/>
+					<img
+						v-else
+						src="../assets/image/thumb-up-outline.png"
+						style="transform:rotate(180deg)"
+						@click="() => react(2)"
+					/>
+					<span style="color:crimson">{{ oppositionCount }}</span>
+				</span>
+			</div>
 			<div class="ui segment">
 				<a :href="url">
 					<h1 class="ui header">{{ title }}</h1>
@@ -68,9 +86,22 @@
 	display: flex;
 	flex-direction: column;
 	position: absolute;
+	right: 4em;
 }
-#operation i {
-	margin: 2em auto;
+#operation > span {
+	height: 64px;
+	display: flex;
+	align-items: center;
+	margin: 16px;
+}
+#operation > span > img {
+	width: 64px;
+	height: 64px;
+	cursor: pointer;
+}
+#operation > span > span {
+	font-size: xxx-large;
+	margin-left: 10px;
 }
 </style>
 
@@ -78,13 +109,22 @@
 import { Vue, Options } from "vue-class-component";
 import jQuery from "jquery";
 import Axios, { AxiosError } from "axios";
-import { News } from "news-recommendation-entity";
 import ErrorHandler from "../error-handler";
 
+import type { News, User } from "news-recommendation-entity";
+
 type Stringfy<T> = { [K in keyof T]: Function extends T[K] ? T[K] : string };
+
 class Props {
 	id!: string;
 }
+
+enum Reaction {
+	None,
+	Approval,
+	Opposition
+}
+
 @Options({
 	props: {
 		id: String,
@@ -101,13 +141,35 @@ export default class NewsView extends Vue.with(Props) {
 	endTime!: number;
 	keywords!: string[];
 	summary!: string[];
-	thumb: boolean | null = null;
+	reaction!: Reaction;
+	approvalCount!: number;
+	oppositionCount!: number;
 	formatDate(date: Date): string {
 		return `${date.getFullYear()}/${date.getMonth() +
 			1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 	}
-	feedback(thumb: boolean) {
-		this.thumb = this.thumb == thumb ? null : thumb;
+	react(reaction: Reaction) {
+		if (this.reaction == Reaction.Approval)
+			--this.approvalCount;
+		else if (this.reaction == Reaction.Opposition)
+			--this.oppositionCount;
+		if (this.reaction != reaction) {
+			if (reaction == Reaction.Approval)
+				++this.approvalCount;
+			else if (reaction == Reaction.Opposition)
+				++this.oppositionCount;
+		}
+		this.reaction = this.reaction == reaction ? Reaction.None : reaction;
+		Axios.put(
+			"/api/news/reaction",
+			{
+				reaction: this.reaction,
+			},
+			{ params: { id: this.id } }
+		).then(
+			() => this.$forceUpdate(),
+			(error: AxiosError) => ErrorHandler.axios(error, this.$router)
+		);
 	}
 	async created() {
 		Promise.all([
@@ -131,10 +193,26 @@ export default class NewsView extends Vue.with(Props) {
 				response => {
 					const data = response.data as any;
 					this.keywords = data.keywords;
-					this.summary = data.summary;
+					this.summary = [data.summary[0]];
 				},
 				(error: AxiosError) => ErrorHandler.axios(error, this.$router)
 			),
+			Axios.get<Partial<Record<Reaction, number[]>>>(
+				"/api/news/reaction",
+				{
+					params: { id: this.id },
+				}
+			).then(async response => {
+				const data = response.data;
+				this.approvalCount = data[Reaction.Approval]?.length ?? 0;
+				this.oppositionCount = data[Reaction.Opposition]?.length ?? 0;
+				const user = (await Axios.get<User>("/api/user")).data;
+				if (data[Reaction.Approval]?.includes(user.id))
+					this.reaction = Reaction.Approval;
+				else if (data[Reaction.Opposition]?.includes(user.id))
+					this.reaction = Reaction.Opposition;
+				else this.reaction = Reaction.None;
+			}),
 		]).then(() => (this.ready = true));
 	}
 	updated() {
